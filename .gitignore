@@ -1,2 +1,3 @@
 # Project workspace files
 .idea
+*.code-workspace
