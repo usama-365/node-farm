@@ -1,0 +1,20 @@
+{
+  "name": "node-farm",
+  "version": "1.0.0",
+  "description": "To practice node's built in HTTP server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/usama-365/node-farm.git"
+  },
+  "author": "usama-365",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/usama-365/node-farm/issues"
+  },
+  "homepage": "https://github.com/usama-365/node-farm#readme"
+}
