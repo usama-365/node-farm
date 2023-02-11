@@ -5,26 +5,56 @@ const url = require("node:url");
 const PORT = 8000;
 const HOST = "127.0.0.1";
 const DATA_FILE = `${__dirname}/data/data.json`;
+const TEMPLATES_DIR = `${__dirname}/templates`;
 
-const data = fs.readFileSync(DATA_FILE, 'utf-8');
+const data = fs.readFileSync(DATA_FILE, "utf-8");
 const dataObj = JSON.parse(data);
+
+const tempOverview = fs.readFileSync(`${TEMPLATES_DIR}/overview.html`, 'utf-8');
+const tempCard = fs.readFileSync(`${TEMPLATES_DIR}/card.html`, 'utf-8');
+const tempProduct = fs.readFileSync(`${TEMPLATES_DIR}/product.html`, 'utf-8');
+
+const replaceTemplate = function (template, product) {
+    let output = template
+        .replaceAll('{%PRODUCT_NAME%}', product.productName)
+        .replaceAll('{%IMAGE%}', product.image)
+        .replaceAll('{%PRICE%}', product.price)
+        .replaceAll('{%QUANTITY%}', product.quantity)
+        .replaceAll('{%ID%}', product.id)
+        .replaceAll('{%FROM%}', product.from)
+        .replaceAll('{%NUTRIENTS%}', product.nutrients)
+        .replaceAll('{%DESCRIPTION%}', product.description);
+    if (!product.organic)
+        return output.replaceAll('{%NOT_ORGANIC%}', 'not-organic');
+    else
+        return output;
+};
 
 const server = http.createServer((req, res) => {
     const path = req.url;
     switch (path) {
+        // Overview page
         case "/overview":
         case "/":
-            res.end("This is the OVERVIEW");
+            res.writeHead(200, {
+                'Content-type': 'text/html'
+            });
+            const cardsHTML = dataObj.map(product => replaceTemplate(tempCard, product)).join('');
+            const response = tempOverview.replace('{%PRODUCT_CARDS%}', cardsHTML);
+            res.end(response);
             break;
+        // Product page
         case "/product":
             res.end("This is the PRODUCT");
             break;
-        case '/api':
+        // API
+        case "/api":
             res.writeHead(200, {
-                'Content-type': 'application/json'
+                "Content-type": "application/json"
             })
             res.end(data);
             break;
+        // 404
         default:
             res.writeHead(404, {
                 "Content-type": "text/html"
