@@ -31,8 +31,9 @@ const replaceTemplate = function (template, product) {
 };
 
 const server = http.createServer((req, res) => {
-    const path = req.url;
-    switch (path) {
+    const {pathname, query} = url.parse(req.url, true);
+    console.log(pathname, query);
+    switch (pathname) {
         // Overview page
         case "/overview":
         case "/":
@@ -44,8 +45,13 @@ const server = http.createServer((req, res) => {
             res.end(response);
             break;
         // Product page
-        case "/product":
-            res.end("This is the PRODUCT");
+        case "/products":
+            res.writeHead(200, {
+                "Content-type": "text/html"
+            })
+            const product = dataObj[query.id];
+            const output = replaceTemplate(tempProduct, product);
+            res.end(output);
             break;
         // API
         case "/api":
